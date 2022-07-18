@@ -1,10 +1,10 @@
 import "./App.css";
-import MicRecord from "./MicRecord";
+import WebcamTest from "./WebcamTest";
 
 function App() {
   return (
     <div className="App">
-      <MicRecord />
+      <WebcamTest />
     </div>
   );
 }

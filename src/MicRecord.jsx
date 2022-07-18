@@ -21,7 +21,7 @@ const MicTest = () => {
 
   return (
     <>
-      <div>
+      <div className="container">
         <ReactMic record={record} onStop={onStop} mimeType="audio/wav" />
 
         {!record ? <button className="start" onClick={startRecording} type="button" /> : <button className="stop" onClick={stopRecording} type="button" />}

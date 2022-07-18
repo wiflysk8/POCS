@@ -3,23 +3,18 @@ import ".//WebCamRecorder.scss";
 
 function WebCamRecorder() {
   const [isRecording, setIsRecording] = useState(false);
-  const videoRef = useRef<null | HTMLVideoElement>(null);
-  const streamRef = useRef<null | MediaStream>(null);
-  const [downloadLink, setDownloadLink] = useState("");
-  const streamRecorderRef = useRef<null | MediaRecorder>(null);
-  const [audioSource, setAudioSource] = useState<string>("");
-  const [videoSource, setVideoSource] = useState<string>("");
-  const [audioSourceOptions, setAudioSourceOptions] = useState<
-    Record<string, string>[]
-  >([]);
-  const [videoSourceOptions, setVideoSourceOptions] = useState<
-    Record<string, string>[]
-  >([]);
+  const videoRef = useRef();
+  const streamRef = useRef();
+  const streamRecorderRef = useRef();
+  const [audioSource, setAudioSource] = useState("");
+  const [videoSource, setVideoSource] = useState("");
+  const [audioSourceOptions, setAudioSourceOptions] = useState([]);
+  const [videoSourceOptions, setVideoSourceOptions] = useState([]);
 
   const [frontCamera, setFrontCamera] = useState();
   const [backCamera, setBackCamera] = useState();
 
-  const chunks = useRef<any[]>([]);
+  const chunks = useRef([]);
 
   function startRecording() {
     if (isRecording) {
@@ -30,7 +25,7 @@ function WebCamRecorder() {
     }
     streamRecorderRef.current = new MediaRecorder(streamRef.current);
     streamRecorderRef.current.start();
-    streamRecorderRef.current.ondataavailable = function (event: BlobEvent) {
+    streamRecorderRef.current.ondataavailable = function (event) {
       if (chunks.current) {
         chunks.current.push(event.data);
       }
@@ -49,7 +44,6 @@ function WebCamRecorder() {
       const blob = new Blob(chunks.current, {
         type: "video/webm;codecs=avc1,opus",
       });
-      setDownloadLink(URL.createObjectURL(blob));
       chunks.current = [];
       console.log("blob", blob);
     },
@@ -67,7 +61,7 @@ function WebCamRecorder() {
   useEffect(
     function () {
       async function prepareStream() {
-        function gotStream(stream:any) {
+        function gotStream(stream) {
           streamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
@@ -98,7 +92,7 @@ function WebCamRecorder() {
           return navigator.mediaDevices.enumerateDevices();
         }
 
-        function gotDevices(deviceInfos:any) {
+        function gotDevices(deviceInfos) {
           const audioSourceOptions = [];
           const videoSourceOptions = [];
           for (const deviceInfo of deviceInfos) {
@@ -117,8 +111,7 @@ function WebCamRecorder() {
           setAudioSourceOptions(audioSourceOptions);
           setVideoSourceOptions(videoSourceOptions);
           setFrontCamera(videoSourceOptions[0].value);
-          setBackCamera(videoSourceOptions[1].value);    
-             
+          setBackCamera(videoSourceOptions[1].value);
         }
 
         await getStream();
@@ -130,71 +123,56 @@ function WebCamRecorder() {
     [audioSource, videoSource, streamRef, videoRef, frontCamera, backCamera]
   );
 
-  const handleVideoChange = (event:any) => {
+  const handleVideoChange = (event) => {
     setVideoSource(event?.target.value);
   };
 
-  const handleAudioChange = (event:any) => {
+  const handleAudioChange = (event) => {
     setAudioSource(event?.target.value);
   };
 
-   const handleToggleCamera = () => {
-     
-      if (videoSource === frontCamera && backCamera !== undefined) {
+  const handleToggleCamera = () => {
+    if (videoSource === frontCamera && backCamera !== undefined) {
       setVideoSource(backCamera);
-
-    } else if(videoSource === backCamera && frontCamera !== undefined) {
+    } else if (videoSource === backCamera && frontCamera !== undefined) {
       setVideoSource(frontCamera);
-    }  
-    
-  }  
-
-  const handleReset = () => {
-    setDownloadLink("");
-  }
+    }
+  };
 
   return (
     <div>
       <div className="video">
-        <video  ref={videoRef} autoPlay muted playsInline />
+        <video ref={videoRef} autoPlay muted playsInline />
       </div>
       <div>
-      <div className="btns">
-        <select onChange={handleVideoChange} id="videoSource" name="videoSource" value={videoSource}>
-          {videoSourceOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <select onChange={handleAudioChange} id="audioSource" name="audioSource" value={audioSource}>
-          {audioSourceOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        {downloadLink && <video className="video2" src={downloadLink} controls  loop autoPlay></video>}
-        {downloadLink && (
-          <a href={downloadLink} download="file.mp4">
-            Descargar
-          </a>
-        )}
-      </div>
-     
+        <div className="btns">
+          <select onChange={handleVideoChange} id="videoSource" name="videoSource" value={videoSource}>
+            {videoSourceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <select onChange={handleAudioChange} id="audioSource" name="audioSource" value={audioSource}>
+            {audioSourceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div></div>
+
         <button onClick={startRecording} disabled={isRecording}>
-          Grabar
+          START RECORDING
         </button>
         <button onClick={stopRecording} disabled={!isRecording}>
-          Parar
+          STOP RECORDING
         </button>
-      
-      <button onClick={handleToggleCamera}>Toggle camera</button>
-      <button onClick={handleReset}>reset</button>
+
+        <button onClick={handleToggleCamera}>Toggle camera</button>
       </div>
     </div>
   );
