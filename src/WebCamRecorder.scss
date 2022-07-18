@@ -1,0 +1,27 @@
+.video {
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+.video2 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 60vh;
+}
+.select {
+  width: 80vw;
+}
+
+.btns {
+  margin-top: 1rem;
+}
+
+@media screen and (max-width: 500px) {
+  .video {
+    width: 103%;
+    height: 60vh;
+    overflow: hidden;
+  }
+}
