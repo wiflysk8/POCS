@@ -5,6 +5,7 @@ function WebCamRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const videoRef = useRef();
   const streamRef = useRef();
+  const [downloadLink, setDownloadLink] = useState("");
   const streamRecorderRef = useRef();
   const [audioSource, setAudioSource] = useState("");
   const [videoSource, setVideoSource] = useState("");
@@ -44,6 +45,7 @@ function WebCamRecorder() {
       const blob = new Blob(chunks.current, {
         type: "video/webm;codecs=avc1,opus",
       });
+      setDownloadLink(URL.createObjectURL(blob));
       chunks.current = [];
       console.log("blob", blob);
     },
@@ -139,6 +141,10 @@ function WebCamRecorder() {
     }
   };
 
+  const handleReset = () => {
+    setDownloadLink("");
+  };
+
   return (
     <div>
       <div className="video">
@@ -163,16 +169,26 @@ function WebCamRecorder() {
             ))}
           </select>
         </div>
-        <div></div>
-
-        <button onClick={startRecording} disabled={isRecording}>
-          START RECORDING
-        </button>
-        <button onClick={stopRecording} disabled={!isRecording}>
-          STOP RECORDING
-        </button>
+        <div>
+          {downloadLink && <video className="video2" src={downloadLink} controls loop autoPlay></video>}
+          {downloadLink && (
+            <a href={downloadLink} download="file.mp4">
+              Descargar
+            </a>
+          )}
+        </div>
+        {!isRecording ? (
+          <button onClick={startRecording} disabled={isRecording}>
+            Start Recording
+          </button>
+        ) : (
+          <button onClick={stopRecording} disabled={!isRecording}>
+            Stop Recording
+          </button>
+        )}
 
         <button onClick={handleToggleCamera}>Toggle camera</button>
+        <button onClick={handleReset}>Reset</button>
       </div>
     </div>
   );

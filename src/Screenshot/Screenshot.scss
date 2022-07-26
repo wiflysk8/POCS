@@ -1,0 +1,37 @@
+.c-webcam {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 800px;
+
+  &__webcamContainer {
+    position: relative;
+  }
+
+  &__btn {
+    margin-top: 1rem;
+    background-color: rgb(255, 0, 0);
+    border-radius: 50%;
+    border: 1px solid rgb(3, 3, 3);
+    height: 42px;
+    width: 42px;
+    align-self: center;
+    cursor: pointer;
+  }
+  &__ul {
+    list-style: none;
+    margin-right: 2em;
+  }
+  &__li {
+    text-align: center;
+    text-transform: capitalize;
+  }
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 800px;
+  height: 400px;
+}
